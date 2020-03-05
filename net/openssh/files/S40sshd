@@ -3,11 +3,25 @@
 prefix="/opt"
 PATH=${prefix}/bin:${prefix}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
 OPID=/opt/var/run/sshd.pid
+KEY_DIR="/opt/etc/ssh"
+COMMENT="$USER@$(hostname -f)" 
+
+check_gen_key () {
+    local keylength=$2
+    local keytype=$1
+    [ -f $KEY_DIR/ssh_host_${keytype}_key ] || ssh-keygen -b $keylength -C "$COMMENT" -f $KEY_DIR/ssh_host_${keytype}_key -t ${keytype} -N ''
+}
 
 start() {
 	echo "starting sshd..."
         # fix permissions issues
         chmod go-w $HOME
+	# create required keys if not exists
+        check_gen_key rsa 4096
+        check_gen_key dsa 1024
+        check_gen_key ecdsa 521
+        check_gen_key ed25519 4096
+	
 	/opt/sbin/sshd
 	}
 
