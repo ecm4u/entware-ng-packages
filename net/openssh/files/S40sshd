@@ -5,7 +5,6 @@ PATH=${prefix}/bin:${prefix}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
 OPID=/opt/var/run/sshd.pid
 KEY_DIR="/opt/etc/ssh"
 COMMENT="$USER@$(hostname -f)"
-HOME_BASE=/share/homes
 
 check_gen_key () {
     local keylength=$2
@@ -16,7 +15,7 @@ check_gen_key () {
 start() {
 	echo "starting sshd..."
         # fix permissions issues
-        chmod go-w $HOME_BASE/$USER
+        chmod go-w $(getent passwd $USER | awk -F ':' '{print $6}')
 	# create required keys if not exists
         check_gen_key rsa 4096
         check_gen_key dsa 1024
