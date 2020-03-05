@@ -10,13 +10,13 @@ HOME_BASE=/share/homes
 check_gen_key () {
     local keylength=$2
     local keytype=$1
-    [ -f $KEY_DIR/ssh_host_${keytype}_key ] || ssh-keygen -b $keylength -C "$COMMENT" -f $KEY_DIR/ssh_host_${keytype}_key -t ${keytype} -N ''
+    [ -f $KEY_DIR/ssh_host_${keytype}_key ] || ssh-keygen -q -b $keylength -C "$COMMENT" -f $KEY_DIR/ssh_host_${keytype}_key -t ${keytype} -N ''
 }
 
 start() {
 	echo "starting sshd..."
         # fix permissions issues
-        chmod go-w $HOME_BASE/admin
+        chmod go-w $HOME_BASE/$USER
 	# create required keys if not exists
         check_gen_key rsa 4096
         check_gen_key dsa 1024
