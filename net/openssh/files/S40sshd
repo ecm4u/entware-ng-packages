@@ -6,6 +6,8 @@ OPID=/opt/var/run/sshd.pid
 
 start() {
 	echo "starting sshd..."
+        # fix permissions issues
+        chmod go-w $HOME
 	/opt/sbin/sshd
 	}
 
@@ -22,6 +24,10 @@ status() {
 	fi
 	}
 
+restart() {
+	kill -HUP $(cat $OPID)
+        }
+
 case "$1" in
         start)
                 start
@@ -30,10 +36,8 @@ case "$1" in
                 stop
                 ;;
         restart)
-                stop
-                sleep 3
-                start
-                ;;
+                restart
+	        ;;
         status) status
                 ;;
         *)
